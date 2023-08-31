@@ -27,6 +27,7 @@
 *.lib
 
 # Executables
+quickfingers
 *.exe
 *.out
 *.app
