@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <ncurses.h>
 
 const char* getRandomWord(char *filename){
 	char buffer[4096];
