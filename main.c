@@ -4,6 +4,8 @@
 #include <string.h>
 #include <ncurses.h>
 
+
+
 #define MAX_WORD_LENGTH 512
 
 void getRandomWord(const char *filename, char* random_word){
@@ -41,22 +43,31 @@ void getRandomWord(const char *filename, char* random_word){
 	return;
 }
 
+void printWord(char* word, int x, int y){
+	attron(A_BOLD);
+	attron(COLOR_PAIR(1));
+	mvprintw(x, y, "%s", word);
+	attroff(COLOR_PAIR(1));
+	attroff(A_BOLD);
+}
+
 int main()
 {
 	// INITIALIZATION
 	srand(time(NULL));
 	char *WORD_FILE = "english.txt";
 	char word[MAX_WORD_LENGTH];
+	int row, col;
 
 	initscr();
+	start_color();
+	init_pair(1, COLOR_YELLOW, COLOR_BLACK);
+	getmaxyx(stdscr, row, col);
 	raw();
 	noecho();
 
 	getRandomWord(WORD_FILE, word);
-
-	attron(A_BOLD);
-	printw("Here's a random word. %s\n", word);
-	attroff(A_BOLD);
+	printWord(word, row/2, (col-strlen(word))/2); //Prints at the center of the screen
 
 	refresh();
 	getch();
