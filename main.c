@@ -51,6 +51,42 @@ void printWord(char* word, int x, int y){
 	attroff(A_BOLD);
 }
 
+void guessWord (char *word, int x, int y){
+	char input;
+	int word_length = strlen(word);
+	int counter = 0;
+
+	while(counter < word_length){
+		input = getch();
+		if (input == word[counter]) counter++;
+		//Move this stuff in a different function..
+		for(int i = 0; i < word_length; i++){
+			if (input != word[counter] && i == counter){
+				attron(A_BOLD | A_UNDERLINE);
+				attron(COLOR_PAIR(3));
+				mvaddch(x, y+i, input);
+				attroff(COLOR_PAIR(3));
+				attroff(A_BOLD | A_UNDERLINE);
+			}
+			else
+			{
+				if(i < counter){
+					attron(A_BOLD);
+					attron(COLOR_PAIR(2));
+					mvaddch(x, y+i, word[i]);
+					attroff(COLOR_PAIR(2));
+					attroff(A_BOLD);
+				}
+				else{
+					attron(A_DIM);
+					mvaddch(x, y+i, word[i]);
+					attroff(A_DIM);
+				}
+			}
+		}
+	}
+}
+
 int main()
 {
 	// INITIALIZATION
@@ -62,12 +98,15 @@ int main()
 	initscr();
 	start_color();
 	init_pair(1, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(2, COLOR_GREEN, COLOR_BLACK);
+	init_pair(3, COLOR_RED, COLOR_BLACK);
 	getmaxyx(stdscr, row, col);
 	raw();
 	noecho();
 
 	getRandomWord(WORD_FILE, word);
 	printWord(word, row/2, (col-strlen(word))/2); //Prints at the center of the screen
+	guessWord(word, (row/2)-1, (col-strlen(word))/2);
 
 	refresh();
 	getch();
