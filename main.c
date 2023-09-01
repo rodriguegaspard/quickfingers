@@ -84,17 +84,31 @@ void printGuess(char* word, int x, int y, int counter, char input){
 	refresh();
 }
 
+void printMistakes(int counter, int x, int y){
+	init_pair(103, COLOR_RED, COLOR_YELLOW);
+	for(int i=0; i < counter; i++){
+		attron(A_BOLD | A_BLINK);
+		attron(COLOR_PAIR(103));
+		mvaddch(x, y+(i*3), 'X');
+		attroff(COLOR_PAIR(103));
+		attroff(A_BOLD | A_BLINK);
+	}
+}
+
 void guessWord (char *word, int x, int y){
 	char input;
 	int word_length = strlen(word) - 1;
-	int counter = 0;
+	int correct_counter = 0;
+	int mistakes_counter = 0;
 
 	mvprintw(x, y, "%s", word);
 
-	while(counter < word_length){
+	while(correct_counter < word_length){
 		input = getch();
-		if (input == word[counter]) counter++;
-		printGuess(word, x, y, counter, input);
+		if (input == word[correct_counter]) correct_counter++;
+		else mistakes_counter++;
+		printGuess(word, x, y, correct_counter, input); //This will need to be moved outside, or else it will only count the errors per word
+		printMistakes(mistakes_counter, x-10, y);
 	}
 }
 
