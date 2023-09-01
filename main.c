@@ -42,47 +42,59 @@ void getRandomWord(const char *filename, char* random_word){
 }
 
 void printWord(char* word, int x, int y){
+	init_pair(100, COLOR_YELLOW, COLOR_BLACK);
 	attron(A_BOLD);
-	attron(COLOR_PAIR(1));
+	attron(COLOR_PAIR(100));
 	mvprintw(x, y, "%s", word);
-	attroff(COLOR_PAIR(1));
+	attroff(COLOR_PAIR(100));
 	attroff(A_BOLD);
+}
+
+void printGuess(char* word, int x, int y, int counter, char input){
+	//Initializing colors
+	init_pair(101, COLOR_GREEN, COLOR_BLACK);
+	init_pair(102, COLOR_RED, COLOR_BLACK);
+
+	int word_length = strlen(word);
+
+	for(int i = 0; i < word_length; i++){
+		if (input != word[counter] && i == counter){
+			attron(A_BOLD | A_UNDERLINE);
+			attron(COLOR_PAIR(102));
+			mvaddch(x, y+i, word[i]);
+			attroff(COLOR_PAIR(102));
+			attroff(A_BOLD | A_UNDERLINE);
+		}
+		else
+		{
+			if(i < counter){
+				attron(A_BOLD);
+				attron(COLOR_PAIR(101));
+				mvaddch(x, y+i, word[i]);
+				attroff(COLOR_PAIR(101));
+				attroff(A_BOLD);
+			}
+			else{
+				attron(A_DIM);
+				mvaddch(x, y+i, word[i]);
+				attroff(A_DIM);
+			}
+		}
+	}
+	refresh();
 }
 
 void guessWord (char *word, int x, int y){
 	char input;
-	int word_length = strlen(word);
+	int word_length = strlen(word) - 1;
 	int counter = 0;
 
-	while(counter < word_length - 1){
+	mvprintw(x, y, "%s", word);
+
+	while(counter < word_length){
 		input = getch();
 		if (input == word[counter]) counter++;
-		//Move this stuff in a different function..
-		for(int i = 0; i < word_length; i++){
-			if (input != word[counter] && i == counter){
-				attron(A_BOLD | A_UNDERLINE);
-				attron(COLOR_PAIR(3));
-				mvaddch(x, y+i, input);
-				attroff(COLOR_PAIR(3));
-				attroff(A_BOLD | A_UNDERLINE);
-			}
-			else
-			{
-				if(i < counter){
-					attron(A_BOLD);
-					attron(COLOR_PAIR(2));
-					mvaddch(x, y+i, word[i]);
-					attroff(COLOR_PAIR(2));
-					attroff(A_BOLD);
-				}
-				else{
-					attron(A_DIM);
-					mvaddch(x, y+i, word[i]);
-					attroff(A_DIM);
-				}
-			}
-		}
-		refresh();
+		printGuess(word, x, y, counter, input);
 	}
 }
 
@@ -96,9 +108,6 @@ int main()
 
 	initscr();
 	start_color();
-	init_pair(1, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_RED, COLOR_BLACK);
 	getmaxyx(stdscr, max_x, max_y);
 
 	curs_set(0);
@@ -108,8 +117,8 @@ int main()
 	for(int i=0; i<5; i++){
 		clear();
 		getRandomWord(WORD_FILE, word);
-		printWord(word, max_x/2, (max_y-strlen(word))/2); //Prints at the center of the screen
-		guessWord(word, (max_x/2)-1, (max_y-strlen(word))/2);
+		printWord(word, max_x/2-1, (max_y-strlen(word))/2);
+		guessWord(word, (max_x/2)+1, (max_y-strlen(word))/2);
 	}
 
 	refresh();
