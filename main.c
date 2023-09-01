@@ -54,7 +54,7 @@ void guessWord (char *word, int x, int y){
 	int word_length = strlen(word);
 	int counter = 0;
 
-	while(counter < word_length){
+	while(counter < word_length - 1){
 		input = getch();
 		if (input == word[counter]) counter++;
 		//Move this stuff in a different function..
@@ -82,6 +82,7 @@ void guessWord (char *word, int x, int y){
 				}
 			}
 		}
+		refresh();
 	}
 }
 
@@ -91,25 +92,27 @@ int main()
 	srand(time(NULL));
 	char *WORD_FILE = "english.txt";
 	char word[MAX_WORD_LENGTH];
-	int row, col;
+	int max_x, max_y;
 
 	initscr();
 	start_color();
 	init_pair(1, COLOR_YELLOW, COLOR_BLACK);
 	init_pair(2, COLOR_GREEN, COLOR_BLACK);
 	init_pair(3, COLOR_RED, COLOR_BLACK);
-	getmaxyx(stdscr, row, col);
+	getmaxyx(stdscr, max_x, max_y);
+
+	curs_set(0);
 	raw();
 	noecho();
 
 	for(int i=0; i<5; i++){
+		clear();
 		getRandomWord(WORD_FILE, word);
-		printWord(word, row/2, (col-strlen(word))/2); //Prints at the center of the screen
-		guessWord(word, (row/2)-1, (col-strlen(word))/2);
+		printWord(word, max_x/2, (max_y-strlen(word))/2); //Prints at the center of the screen
+		guessWord(word, (max_x/2)-1, (max_y-strlen(word))/2);
 	}
 
 	refresh();
-	getch();
 	endwin();
 
 	return 0;
