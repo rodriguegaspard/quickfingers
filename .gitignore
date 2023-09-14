@@ -31,3 +31,6 @@ quickfingers
 *.exe
 *.out
 *.app
+
+# LSP cache
+.ccls-cache/
