@@ -95,21 +95,22 @@ void printMistakes(int counter, int x, int y){
 	}
 }
 
-void guessWord (char *word, int x, int y){
+int guessWord (char *word, int x, int y, int mistakes){
 	char input;
 	int word_length = strlen(word) - 1;
 	int correct_counter = 0;
-	int mistakes_counter = 0;
+	int mistakes_counter = mistakes;
 
 	mvprintw(x, y, "%s", word);
 
 	while(correct_counter < word_length){
+		printMistakes(mistakes_counter, x-10, y);
 		input = getch();
 		if (input == word[correct_counter]) correct_counter++;
 		else mistakes_counter++;
 		printGuess(word, x, y, correct_counter, input); //This will need to be moved outside, or else it will only count the errors per word
-		printMistakes(mistakes_counter, x-10, y);
 	}
+  return mistakes_counter;
 }
 
 int main()
@@ -119,6 +120,7 @@ int main()
 	char *WORD_FILE = "english.txt";
 	char word[MAX_WORD_LENGTH];
 	int max_x, max_y;
+  int mistakes_counter = 0;
 
 	initscr();
 	start_color();
@@ -132,11 +134,10 @@ int main()
 		clear();
 		getRandomWord(WORD_FILE, word);
 		printWord(word, max_x/2-1, (max_y-strlen(word))/2);
-		guessWord(word, (max_x/2)+1, (max_y-strlen(word))/2);
+		mistakes_counter += guessWord(word, (max_x/2)+1, (max_y-strlen(word))/2, mistakes_counter);
 	}
 
 	refresh();
 	endwin();
-
 	return 0;
 }
